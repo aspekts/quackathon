@@ -1,6 +1,4 @@
 import requests
-import re
-from .distance_calcaulation import get_travel_information
 from bs4 import BeautifulSoup
 import pandas as pd
 import datetime
@@ -10,13 +8,11 @@ class SpareRoom:
     URL_ROOMS = DOMAIN + '/flatshare'
     URL_SEARCH = URL_ROOMS 
 
-    def __init__(self, search_url, workplace_coords, citymapper_api_key, min_price_pw=180, max_price_pw=290, entries_to_scrape=30):
-        self.workplace_coords = workplace_coords
-        self.citymapper_api_key = citymapper_api_key
+    def __init__(self, search_url, entries_to_scrape=30):
         self.URL_SEARCH = self.URL_ROOMS + search_url
         self.entries_to_scrape = entries_to_scrape
 
-        r = requests.get(self.URL_SEARCH % (min_price_pw, max_price_pw))
+        r = requests.get(self.URL_SEARCH)
         s = BeautifulSoup(r.content, 'lxml')
         self.url = r.url + 'offset=%i'
         self.pages = int(int(s.find("p", {"class": "navcurrent"}).findAll("strong")[1].string[:-1]) / 10)
@@ -48,7 +44,7 @@ class SpareRoom:
                     add_room = room_id not in previous_rooms['id'].values
 
                 if add_room:
-                    room = Room(room, self.DOMAIN, self.workplace_coords, self.citymapper_api_key)
+                    room = Room(room, self.DOMAIN)
                     if room is not None:
                         rooms.append(room)
                 else:
@@ -70,13 +66,10 @@ class SpareRoom:
 
         return rooms
 
-
-
 class Room:
     """
     Room Object
      * extracts listing info from the listing's page (not the search results page)
-     * calculates commute times to workplace
 
     Contains:
         url
@@ -86,10 +79,8 @@ class Room:
                   balcony, disabled access, living room, broadband, housemates. total rooms, ages, smoker, pets,
                   language, occupation, gender, couples ok, smoking ok, pets ok, references, min age, max age)
         gps_location
-        commute distance to workplace (by public transport and cycling)
-        
     """
-    def __init__(self, room_soup, domain, workplace_coords, citymapper_api_key):
+    def __init__(self, room_soup, domain):
         # Get listing page
         self.url = str(domain + room_soup.find("a")['href'])
         self.id = int(self.url.split("flatshare_id=")[1].split("&")[0])
@@ -113,18 +104,11 @@ class Room:
             setattr(self, f'room_{i}_price', price)
             setattr(self, f'room_{i}_type', type)
 
-        # Calculate commute times
-        self.location_coords = self._get_location_coords(room_soup)
-        commute_times = get_travel_information(self.location_coords, api_key=citymapper_api_key, work_coords=workplace_coords)
-        self.cycle_time = commute_times['bike_time_minutes']
-        self.transit_time = commute_times['transit_time_minutes']
-
         features = self._get_features(room_soup)
         [setattr(self, feature, features[feature]) for feature in features]
 
         # Todays date
         self.date_scraped = datetime.datetime.now().strftime("%d-%m-%Y")
-
 
     def __str__(self):
         return str(self.__dict__)
@@ -167,23 +151,6 @@ class Room:
                 features[key] = dd.text.strip()
         return features
 
-    def _get_location_coords(self, room_soup):
-        script_text = room_soup.head.findAll("script")
-        for script in script_text:
-            script_text = script.text
-            if "_sr.page" in script_text:
-                location_idx = script_text.find("location")
-                if location_idx == -1:
-                    continue
-                location = script_text[location_idx:location_idx+100]
-                location = location.split('{')[1].split('}')[0]
-                location = location.split(',')[:-1]
-                location = [float(l.split(':')[1].strip().replace('"', '')) for l in location]
-                # latitude, longitude
-                location = (location[0], location[1])
-                return location
-
-
 def read_existing_rooms_from_spreadsheet(file_path):
     try:
         df = pd.read_csv(file_path)
@@ -191,7 +158,6 @@ def read_existing_rooms_from_spreadsheet(file_path):
         print("Creating new spreadsheet for rooms.")
         df = pd.DataFrame()
     return df
-
 
 def append_new_rooms_to_spreadsheet(df, new_rooms, file_path):
     new_df = pd.DataFrame([room.__dict__ for room in new_rooms])
@@ -218,11 +184,6 @@ def append_new_rooms_to_spreadsheet(df, new_rooms, file_path):
     combined_df = combined_df[reordered_columns]
 
     combined_df.to_csv(file_path, index=False)
-
-# def append_new_rooms_to_spreadsheet(df, new_rooms, file_path):
-#     new_df = pd.DataFrame([room.__dict__ for room in new_rooms])
-#     combined_df = pd.concat([df, new_df], ignore_index=True)
-#     combined_df.to_csv(file_path, index=False)
 
 def append_new_rooms_to_json(df, new_rooms, file_path):
     new_df = pd.DataFrame([room.__dict__ for room in new_rooms])

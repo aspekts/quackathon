@@ -2,6 +2,7 @@ from flask_cors import CORS
 from flask import Flask, jsonify
 import requests
 from bs4 import BeautifulSoup
+from spareroom.src.spareroom import SpareRoom
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -60,7 +61,14 @@ def scrape_dusa_events():
 
     return events
 
-# Flask route to display scraped data
+# Function to scrape SpareRoom listings
+def scrape_spareroom_listings():
+    search_url = '/search.pl?nmsq_mode=normal&action=search&max_per_page=&flatshare_type=offered&search=Dundee&min_rent=100&max_rent=200&per=pw&available_search=N&day_avail=02&mon_avail=05&year_avail=2023&min_term=0&max_term=0&days_of_wk_available=7+days+a+week&showme_rooms=Y'
+    spare_room = SpareRoom(search_url, entries_to_scrape=30)
+    listings = spare_room.get_rooms()
+    return [listing.__dict__ for listing in listings]
+
+# Flask route to display scraped DUSA events
 @app.route('/api/DUSAevents', methods=['GET'])
 def get_events():
     try:
@@ -68,6 +76,17 @@ def get_events():
         events = scrape_dusa_events()
         # Return the events as JSON
         return jsonify(events)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Flask route to display scraped SpareRoom listings
+@app.route('/api/spareroom', methods=['GET'])
+def get_spareroom_listings():
+    try:
+        # Scrape SpareRoom listings
+        listings = scrape_spareroom_listings()
+        # Return the listings as JSON
+        return jsonify(listings)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
