@@ -70,6 +70,7 @@ export default function LandingPage() {
               initial="hidden"
               animate="visible"
             >
+              <Link href="/map">
               <Card className="p-6 hover:shadow-lg transition-shadow">
                 <div className="flex flex-col items-center text-center">
                   <div className="p-4 bg-primary/10 rounded-full mb-4">
@@ -81,6 +82,7 @@ export default function LandingPage() {
                   </p>
                 </div>
               </Card>
+              </Link>
             </motion.div>
 
             <motion.div 
@@ -89,6 +91,7 @@ export default function LandingPage() {
               animate="visible"
               transition={{ delay: 0.2 }}
             >
+              <Link href="/buddy-match">
               <Card className="p-6 hover:shadow-lg transition-shadow">
                 <div className="flex flex-col items-center text-center">
                   <div className="p-4 bg-blue-100 rounded-full mb-4">
@@ -100,6 +103,7 @@ export default function LandingPage() {
                   </p>
                 </div>
               </Card>
+              </Link>
             </motion.div>
 
             <motion.div 
@@ -108,6 +112,7 @@ export default function LandingPage() {
               animate="visible"
               transition={{ delay: 0.4 }}
             >
+              <Link href="/calendar">
               <Card className="p-6 hover:shadow-lg transition-shadow">
                 <div className="flex flex-col items-center text-center">
                   <div className="p-4 bg-green-100 rounded-full mb-4">
@@ -119,6 +124,7 @@ export default function LandingPage() {
                   </p>
                 </div>
               </Card>
+              </Link>
             </motion.div>
           </div>
         </div>

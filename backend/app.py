@@ -1,4 +1,3 @@
-from flask_cors import CORS
 from flask import Flask, jsonify
 import requests
 from bs4 import BeautifulSoup
@@ -6,7 +5,6 @@ from spareroom.src.spareroom import SpareRoom
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)
 
 # Function to scrape DUSA events
 def scrape_dusa_events():
@@ -61,6 +59,28 @@ def scrape_dusa_events():
 
     return events
 
+def scrape_dundee_events():
+    url = "https://www.dundee.ac.uk/events/"
+    response = requests.get(url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.content, 'html.parser')
+    event_cards = soup.find_all('article', class_='card--event')
+    events = []
+    for card in event_cards:
+        title = card.find('div', class_='card__title').text.strip()
+        date = card.find('time', class_='card__date').text.strip()
+        time = card.find('time', class_='card__time').text.strip()
+        link = card.find('a', class_='card__link')['href']
+        image = card.find('img', class_='card__image')['src']
+        event = {
+            'title': title,
+            'date': date,
+            'time': time,
+            'link': link,
+            'image': image
+        }
+        events.append(event)
+
 # Function to scrape SpareRoom listings
 def scrape_spareroom_listings():
     search_url = '/search.pl?nmsq_mode=normal&action=search&max_per_page=&flatshare_type=offered&search=Dundee&min_rent=100&max_rent=200&per=pw&available_search=N&day_avail=02&mon_avail=05&year_avail=2023&min_term=0&max_term=0&days_of_wk_available=7+days+a+week&showme_rooms=Y'
@@ -85,11 +105,18 @@ def get_spareroom_listings():
     try:
         # Scrape SpareRoom listings
         listings = scrape_spareroom_listings()
+        print(listings)
         # Return the listings as JSON
         return jsonify(listings)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
+@app.route('/api/dundeeevents', methods=['GET'])
+def get_events():
+    try:
+        events = scrape_dundee_events()
+        return jsonify(events)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 # Run the Flask app
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
