@@ -8,9 +8,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 // Fix Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: '@/img/marker-icon-2x-black.png',
-  iconUrl: '@/img/marker-icon-violet.png',
-  shadowUrl: '@/img/marker-shadow.png',
+  iconRetinaUrl: '/marker-icon-2x-orange.png',
+  iconUrl: '/marker-icon-violet.png',
+  shadowUrl: '/marker-shadow.png',
 });
 
 const MapContent = ({ center }) => {

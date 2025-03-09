@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Campus Companion App
 
-## Getting Started
+## Overview
 
-First, run the development server:
+The Campus Companion App is a comprehensive platform designed to enhance the campus experience for students at the University of Dundee. It provides a variety of features, including a campus map, event aggregator, and room listings, all integrated into a single application.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Campus Map
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+The Campus Map feature provides an interactive map of the University of Dundee campus. It includes:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Dynamic Map Content**: Displays various locations on the campus, such as academic buildings, social spaces, health services, and student services.
+- **User Geolocation**: Shows the user's current location on the map.
+- **Real-time Updates**: Fetches and displays real-time updates of locations from the backend.
 
-## Learn More
+### Event Aggregator
 
-To learn more about Next.js, take a look at the following resources:
+The Event Aggregator feature consolidates events from multiple sources, including DUSA (Dundee University Students' Association) and SpareRoom. It includes:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Event Fetching**: Fetches events from the backend API.
+- **Event Display**: Displays a list of events with details such as title, description, date, and time.
+- **Interactive Dialog**: Allows users to view events in a dialog box.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### BuddyUp
 
-## Deploy on Vercel
+The BuddyUp feature helps students find new friends or potential new roommates by finding people with similar interests. It includes:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **User Profiles**: Allows users to create profiles with information about themselves, such as interests, hobbies, and preferences.
+- **Matching Algorithm**: Matches users based on their profiles and interests.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Installation
+
+To install and run the Campus Companion App, follow these steps:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/aspekts/quackathon
+   cd quackathon
+    ```
+2. Install the required dependencies for both the frontend and backend:
+   ```bash
+   cd frontend
+   npm install
+   cd ../backend
+   npm install
+   ```
+3. Start the backend server:
+   ```bash
+   cd backend
+   npm start
+   ```
+4. Start the frontend server:
+   ```bash
+   cd frontend
+   npm start
+   ```
+5. Open the app in your browser:
+   ```
+   http://localhost:3000
+   ```
+6. Explore the Campus Companion App and enjoy the features!
+# Inspiration
+The inspiration for this project came from the desire to create a comprehensive platform that enhances the campus experience for students at the University of Dundee. For us personally, we are all new students at the University of Dundee, and we understand the challenges and opportunities that come with starting university. We wanted to create a tool that would help students make the most of their time on campus and create a sense of community among students.

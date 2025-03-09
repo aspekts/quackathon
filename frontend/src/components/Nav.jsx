@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/navigation";
+import supabase from "@/lib/supabase";
 export default function Nav() {
   const { user } = useAuth();
   const router = useRouter();
